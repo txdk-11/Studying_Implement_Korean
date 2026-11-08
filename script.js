@@ -40,17 +40,37 @@ startTimer();
 // 2. 지문 형광펜 및 밑줄 기능
 function highlightSelection(color) {
     const userSelection = window.getSelection();
-    if (!userSelection.rangeCount || userSelection.isCollapsed) return;
+    if (!userSelection || !userSelection.rangeCount || userSelection.isCollapsed) return;
 
     const range = userSelection.getRangeAt(0);
-    const span = document.createElement('span');
-    span.className = color === 'yellow' ? 'highlight-yellow' : 'highlight-green';
     
+    // 선택된 영역이 지문(passageArea) 내부인지 확인
+    const passageArea = document.getElementById('passageArea');
+    if (!passageArea || !passageArea.contains(range.commonAncestorContainer)) {
+        return;
+    }
+
+    const className = color === 'yellow' ? 'highlight-yellow' : 'highlight-green';
+
     try {
+        // 단일 텍스트 노드인 경우 간단히 surroundContents 사용
+        const span = document.createElement('span');
+        span.className = className;
         range.surroundContents(span);
     } catch (e) {
-        console.log("선택 영역 래핑 제외");
+        // 태그(<strong> 등)가 걸쳐 있어서 surroundContents가 실패할 경우 안전하게 추출 후 대체
+        try {
+            const span = document.createElement('span');
+            span.className = className;
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+        } catch (err) {
+            console.error("형광펜 칠하기 실패:", err);
+        }
     }
+    
+    // 형광펜 적용 후 선택 해제
+    userSelection.removeAllRanges();
 }
 
 function clearHighlights() {
