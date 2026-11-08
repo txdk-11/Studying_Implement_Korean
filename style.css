@@ -1,0 +1,38 @@
+/* 기본 폰트 및 배경 설정 */
+body {
+font-family: 'Noto Sans KR', sans-serif;
+background-color: #f8fafc;
+color: #334155;
+}
+
+/* 지문 형광펜 스타일 */
+.highlight-yellow {
+background-color: #fef08a;
+border-radius: 2px;
+padding: 0 2px;
+}
+
+.highlight-green {
+background-color: #bbf7d0;
+border-radius: 2px;
+padding: 0 2px;
+}
+
+/* 커스텀 스크롤바 디자인 */
+.custom-scrollbar::-webkit-scrollbar {
+width: 6px;
+height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+background: #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+background: #cbd5e1;
+border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+background: #94a3b8;
+}
