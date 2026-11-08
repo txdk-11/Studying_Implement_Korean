@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국어 모의고사 오답노트 & 풀이 공유</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        slateBg: '#f8fafc',
+                        paperBg: '#ffffff',
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- 1. Navigation Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0 shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div class="bg-brand-900 text-white p-2 rounded-lg font-bold text-lg flex items-center justify-center w-9 h-9">
+                국
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-800 leading-tight">국어 모의고사 오답노트 & 풀이 공유</h1>
+                <p class="text-xs text-slate-500">2025학년도 6월 고3 수능모의평가 > 독서(비문학)</p>
+            </div>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200 text-xs font-semibold">
+            <div id="step1Indicator" class="px-3 py-1 bg-white text-brand-700 rounded-md shadow-sm flex items-center gap-1.5 font-bold">
+                <span class="w-4 h-4 rounded-full bg-brand-700 text-white text-[10px] flex items-center justify-center">1</span>
+                <span>문제 풀기</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-400 mx-2 text-[10px]"></i>
+            <div id="step2Indicator" class="px-3 py-1 text-slate-400 flex items-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-600 text-[10px] flex items-center justify-center">2</span>
+                <span>채점 & 팁/오답노트</span>
+            </div>
+        </div>
+
+        <!-- User Profile & Timer -->
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+                <i class="fa-regular fa-clock text-brand-700"></i>
+                <span id="timer" class="font-mono font-semibold text-slate-700 text-sm">00:00</span>
+                <button id="toggleTimerBtn" onclick="toggleTimer()" class="text-xs text-slate-500 hover:text-slate-800 ml-1">
+                    <i class="fa-solid fa-pause" id="timerIcon"></i>
+                </button>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center font-bold text-slate-600 text-sm">
+                    학생
+                </div>
+                <span class="text-sm font-medium text-slate-700">열공하는수험생</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- STEP 1: PROBLEM SOLVING VIEW -->
+    <div id="step1View" class="flex-1 flex flex-col overflow-hidden max-w-5xl w-full mx-auto p-4 md:p-6">
+        <!-- Toolbar for Passage -->
+        <div class="bg-white border border-slate-200 rounded-t-xl px-4 py-2.5 flex justify-between items-center text-xs text-slate-600 shadow-sm">
+            <div class="flex space-x-2">
+                <button onclick="highlightSelection('yellow')" class="px-2.5 py-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded border border-yellow-300 flex items-center gap-1 transition">
+                    <i class="fa-solid fa-highlighter"></i> 노란 형광펜
+                </button>
+                <button onclick="highlightSelection('green')" class="px-2.5 py-1 bg-green-100 hover:bg-green-200 text-green-800 rounded border border-green-300 flex items-center gap-1 transition">
+                    <i class="fa-solid fa-highlighter"></i> 초록 형광펜
+                </button>
+                <button onclick="clearHighlights()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-300 flex items-center gap-1 transition">
+                    <i class="fa-solid fa-eraser"></i> 초기화
+                </button>
+            </div>
+            <span class="text-slate-400 hidden sm:inline">* 지문의 중요한 구절을 마우스로 드래그하여 밑줄을 쳐보세요.</span>
+        </div>
+
+        <!-- Passage & Question Scroll Container -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 bg-paperBg border-x border-b border-slate-200 custom-scrollbar space-y-6 shadow-sm">
+            <!-- Passage Title -->
+            <div class="border-b border-slate-200 pb-3">
+                <span class="bg-brand-50 text-brand-700 font-semibold px-3 py-1 rounded-md text-xs border border-brand-200">[31~34] 다음 글을 읽고 물음에 답하시오.</span>
+            </div>
+
+            <!-- Passage Text -->
+            <div id="passageArea" class="text-slate-800 leading-relaxed text-sm md:text-base space-y-4">
+                <p class="text-justify">
+                    <strong>[1문단]</strong> 채권은 금융 시장에서 정부, 기업 등이 자금을 조달하기 위해 발행하는 채무 증서이다. 채권 보유자는 정해진 만기일에 원금과 이자를 받을 권리를 가진다. 채권의 가격은 시장 금리 변동과 밀접한 연관성을 맺고 있으며, 금리가 상승하면 기존에 발행된 채권의 거래 가격은 하락하는 성질을 가진다. 이는 새로 발행되는 채권의 이율이 더 높아져 기존 채권의 상대적 매력도가 떨어지기 때문이다.
+                </p>
+                <p class="text-justify">
+                    <strong>[2문단]</strong> 시장 금리와 채권 가격 간의 관계를 설명하는 핵심 개념 중 하나는 '듀레이션(Duration)'이다. 듀레이션은 채권에서 발생하는 현금 흐름의 회수 기간을 가중 평균한 것으로, 채권 가격이 금리 변동에 얼마나 민감하게 반응하는지를 나타내는 지표이다. 만기가 길수록, 그리고 표면 이율이 낮을수록 듀레이션은 길어진다. 듀레이션이 긴 채권일수록 금리 변동에 따른 가격 변화 폭이 커진다.
+                </p>
+                <p class="text-justify">
+                    <strong>[3문단]</strong> 한편, 신용 위험(Credit Risk) 역시 채권 가격 결정에 결정적인 변수로 작용한다. 발행 주체의 신용 등급이 하락하면 해당 채권의 부도 위험이 증가하므로, 투자자들은 더 높은 위험 프리미엄을 요구하게 된다. 따라서 신용 등급이 낮아진 채권은 시장에서 할인가격에 거래되며, 수익률은 상승하게 된다.
+                </p>
+            </div>
+
+            <!-- Question Block -->
+            <div class="mt-8 border-2 border-slate-300 rounded-xl p-6 bg-slate-50 shadow-inner">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="font-bold text-base md:text-lg text-slate-900">31. 윗글의 내용과 일치하지 않는 것은? [3점]</h3>
+                    <span class="bg-red-100 text-red-700 text-xs px-2.5 py-1 rounded-full font-semibold border border-red-200">오답률 68%</span>
+                </div>
+
+                <div class="space-y-3 text-sm text-slate-800 mt-4">
+                    <label class="flex items-center p-3 rounded-lg bg-white border border-slate-200 hover:border-brand-300 cursor-pointer transition shadow-sm">
+                        <input type="radio" name="question31" value="1" class="w-4 h-4 accent-brand-600">
+                        <span class="ml-3">① 시장 금리가 상승하면 기존 채권의 시장 거래 가격은 하락한다.</span>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg bg-white border border-slate-200 hover:border-brand-300 cursor-pointer transition shadow-sm">
+                        <input type="radio" name="question31" value="2" class="w-4 h-4 accent-brand-600">
+                        <span class="ml-3">② 채권의 표면 이율이 낮을수록 듀레이션은 짧아지는 경향이 있다.</span>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg bg-white border border-slate-200 hover:border-brand-300 cursor-pointer transition shadow-sm">
+                        <input type="radio" name="question31" value="3" class="w-4 h-4 accent-brand-600">
+                        <span class="ml-3">③ 발행 주체의 신용 등급 하락은 요구 위험 프리미엄을 증가시킨다.</span>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg bg-white border border-slate-200 hover:border-brand-300 cursor-pointer transition shadow-sm">
+                        <input type="radio" name="question31" value="4" class="w-4 h-4 accent-brand-600">
+                        <span class="ml-3">④ 만기가 긴 채권일수록 금리 변동에 따른 가격 변동성이 크다.</span>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg bg-white border border-slate-200 hover:border-brand-300 cursor-pointer transition shadow-sm">
+                        <input type="radio" name="question31" value="5" class="w-4 h-4 accent-brand-600">
+                        <span class="ml-3">⑤ 듀레이션은 채권의 현금 흐름 회수 기간을 가중 평균한 수치이다.</span>
+                    </label>
+                </div>
+
+                <!-- Submit Button Area -->
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+                    <button onclick="submitAnswer()" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition shadow flex items-center gap-2">
+                        <span>답 제출 및 정답 확인하기</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2: RESULT & REVIEW & TIPS VIEW (Hidden by default) -->
+    <div id="step2View" class="flex-1 flex flex-col overflow-y-auto max-w-5xl w-full mx-auto p-4 md:p-6 custom-scrollbar space-y-6 hidden">
+        
+        <!-- Result Summary Banner -->
+        <div id="resultBanner" class="p-6 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <div id="resultIconBox" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold">
+                    <!-- Icon populated dynamically -->
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h2 id="resultTitle" class="text-xl font-bold"></h2>
+                        <span id="userChoiceTag" class="text-xs px-2.5 py-0.5 rounded-full font-bold"></span>
+                    </div>
+                    <p id="resultDesc" class="text-xs mt-1 text-slate-600"></p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 w-full sm:w-auto justify-end">
+                <div class="text-right border-r pr-4 border-slate-300">
+                    <span class="text-[11px] text-slate-400 block">풀이 소요 시간</span>
+                    <span id="resultTime" class="font-mono font-bold text-slate-700 text-sm">00:00</span>
+                </div>
+                <button onclick="resetToStep1()" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 px-4 py-2 rounded-lg text-xs font-semibold transition shadow-sm">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> 다시 풀기
+                </button>
+            </div>
+        </div>
+
+        <!-- Correct Answer Explanation Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i> 출제 의도 및 정답 공식 해설
+                </h3>
+                <span class="text-xs text-brand-700 font-bold bg-brand-50 px-2.5 py-1 rounded border border-brand-200">정답 ②번</span>
+            </div>
+            <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
+                <strong>정답인 이유 (②번):</strong> 지문 2문단 4번째 줄에 따르면 <em>"만기가 길수록, 그리고 표면 이율이 낮을수록 듀레이션은 길어진다."</em>라고 명시되어 있습니다. 따라서 표면 이율이 낮을수록 듀레이션은 짧아지는 것이 아니라 <strong>'길어진다'</strong>가 올바른 설명입니다.
+            </p>
+        </div>
+
+        <!-- Split Grid: My Note & Shared Tips -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- LEFT: My Review Note Input -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-brand-600"></i> 내 오답노트 & 사고과정 기록
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">내가 틀린 핵심 이유나 기억해야 할 점을 기록하세요.</p>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-2">풀이 접근 방식 / 오답 원인 태그</label>
+                    <div class="flex flex-wrap gap-1.5 text-xs">
+                        <button onclick="toggleTag(this)" class="tag-btn px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100">#지문근거확실</button>
+                        <button onclick="toggleTag(this)" class="tag-btn px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100">#인과관계역전</button>
+                        <button onclick="toggleTag(this)" class="tag-btn px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100">#시간부족</button>
+                        <button onclick="toggleTag(this)" class="tag-btn px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100">#서술어뒤바꿈</button>
+                    </div>
+                </div>
+
+                <!-- Text Area -->
+                <div class="flex-1 flex flex-col space-y-2">
+                    <label class="text-xs font-bold text-slate-700">나만의 복습 코멘트</label>
+                    <textarea id="myCommentText" rows="5" class="w-full border border-slate-300 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 leading-relaxed" placeholder="예: 2문단 듀레이션 비례 법칙을 제대로 안 읽고 빠르게 넘어가서 실수가 발생함. 서술어 반대 꼬기 주의하자!"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center">
+                    <label class="flex items-center text-xs text-slate-600 cursor-pointer">
+                        <input type="checkbox" id="shareCheck" class="mr-2 accent-brand-600 rounded">
+                        <span>다른 수험생들에게 이 팁 공유하기</span>
+                    </label>
+                    <button onclick="saveMyNote()" class="bg-brand-700 hover:bg-brand-800 text-white font-medium px-4 py-2 rounded-lg text-xs transition shadow-sm">
+                        노트 저장하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Shared Solutions & Community Tips Feed -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> 선배·동료 수험생들의 실전 팁
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">이 문제를 빠르게 해결한 사람들의 사고 원리</p>
+                    </div>
+                    <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-medium">총 12개 팁</span>
+                </div>
+
+                <!-- Feed Cards Scroll Container -->
+                <div class="space-y-3 overflow-y-auto max-h-[360px] custom-scrollbar pr-1">
+                    <!-- Tip Card 1 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-brand-300 transition space-y-2.5">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 font-bold text-[10px] flex items-center justify-center">1등</span>
+                                <span class="font-bold text-xs text-slate-800">국어만점가자</span>
+                            </div>
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                                #서술어뒤바꿈
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                            <strong>💡 3초 실전 팁:</strong> 2문단의 비례 관계 공식 <code class="bg-slate-100 px-1 py-0.5 rounded text-red-600 font-mono">[낮을수록 -> 길어진다]</code>를 지문 옆에 메모하세요. ②번 선지는 '낮을수록 짧아진다'로 비례 방향을 꼬아놓은 평가원의 대표 오답 패턴입니다.
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                            <button onclick="likeSolution(this)" class="flex items-center space-x-1 hover:text-brand-600 transition">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                                <span>도움이 됐어요</span>
+                                <span class="count font-bold text-brand-700">32</span>
+                            </button>
+                            <span class="text-[10px] text-slate-400">2026.11.02 작성</span>
+                        </div>
+                    </div>
+
+                    <!-- Tip Card 2 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-brand-300 transition space-y-2.5">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 font-bold text-[10px] flex items-center justify-center">멘토</span>
+                                <span class="font-bold text-xs text-slate-800">국어고수선생님</span>
+                            </div>
+                            <span class="bg-brand-50 text-brand-700 border border-brand-200 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                                #지문근거확실
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                            <strong>📌 출제 의도 지점:</strong> 비문학 지문 읽을 때 (증가/감소, 긴/짧은) 같은 대립 형용사는 꼭 화살표 표시(↑, ↓)로 짝을 지어 둬야 선지 판정할 때 시간을 대폭 단축할 수 있습니다.
+                        </p>
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                            <button onclick="likeSolution(this)" class="flex items-center space-x-1 hover:text-brand-600 transition">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                                <span>도움이 됐어요</span>
+                                <span class="count font-bold text-brand-700">19</span>
+                            </button>
+                            <span class="text-[10px] text-slate-400">2026.11.01 작성</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- External JS Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
